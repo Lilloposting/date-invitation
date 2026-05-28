@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   :root {
     --pink-deep: #d63384;
@@ -655,7 +656,7 @@
   <div class="step" data-step="6">
     <div class="success-heart">💖</div>
     <h1>¡Es una cita!</h1>
-    <p class="subtitle">Recibí tu confirmación. <br/>Te voy a escribir muy pronto para terminar de coordinar ✨</p>
+    <p class="subtitle">Te acabo de enviar la confirmación a tu correo 💌 <br/>Revisa tu inbox (y el spam, por si acaso) ✨</p>
     <div class="summary" id="finalSummary"></div>
     <p class="subtitle mt-24" style="font-size: 14px;">No puedo esperar a verte. 💕</p>
   </div>
@@ -673,11 +674,19 @@
 </div>
 
 <script>
-  // ====== Configuración ======
-  // FormSubmit.co envía el formulario directo a este correo.
-  // IMPORTANTE: la primera vez que se envíe el form, recibirás un correo
-  // de "confirma este endpoint" — haz click en el link para activarlo.
-  const RECIPIENT_EMAIL = 'desarrolladorbi@sportlife.cl';
+  // ====== Configuración EmailJS ======
+  // Reemplaza estos 3 valores con los tuyos del dashboard de EmailJS:
+  //   https://dashboard.emailjs.com/admin
+  const EMAILJS_PUBLIC_KEY  = 'REPLACE_WITH_PUBLIC_KEY';
+  const EMAILJS_SERVICE_ID  = 'REPLACE_WITH_SERVICE_ID';
+  const EMAILJS_TEMPLATE_ID = 'REPLACE_WITH_TEMPLATE_ID';
+
+  // Tu nombre (aparece como remitente del correo)
+  const FROM_NAME = 'Lillo';
+
+  if (typeof emailjs !== 'undefined') {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+  }
 
   // ====== Datos de restaurantes (Santiago, Chile) ======
   const categories = [
@@ -970,41 +979,28 @@
     sendBtn.disabled = true;
     sendBtn.innerHTML = '<span class="spinner"></span>Enviando...';
 
-    // Payload para FormSubmit
-    const payload = {
-      _subject: `💕 ¡Tienes una cita! ${name ? '— ' + name : ''}`,
-      _template: 'table',
-      _captcha: 'false',
-      Nombre:      name || '(no compartido)',
-      Email:       email,
-      Comida:      state.category,
-      Restaurante: state.restaurant,
-      Fecha:       formatDate(state.date),
-      Hora:        state.timeLabel,
-      Mensaje:     '¡Acepté la cita! 💕 Escríbeme para coordinar los últimos detalles.'
+    // Parámetros para el template de EmailJS
+    const templateParams = {
+      to_email:   email,
+      to_name:    name || 'Hermosa',
+      from_name:  FROM_NAME,
+      food:       state.category,
+      restaurant: state.restaurant,
+      date:       formatDate(state.date),
+      time:       state.timeLabel,
+      reply_to:   email
     };
 
     try {
-      const res = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(RECIPIENT_EMAIL)}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (data.success || res.ok) {
-        renderFinalSummary();
-        showStep(6);
-        fireConfetti();
-      } else {
-        throw new Error(data.message || 'Error desconocido');
-      }
+      if (typeof emailjs === 'undefined') throw new Error('EmailJS no cargó');
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+      renderFinalSummary();
+      showStep(6);
+      fireConfetti();
     } catch (err) {
+      const msg = (err && (err.text || err.message)) || 'error de red';
       document.getElementById('errorMsg').textContent =
-        'No pudimos enviar tu confirmación: ' + (err.message || 'error de red') +
-        '. Por favor intenta de nuevo.';
+        'No pudimos enviar tu confirmación: ' + msg + '. Por favor intenta de nuevo.';
       showStep(7);
     } finally {
       sendBtn.disabled = false;
