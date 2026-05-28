@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>A Little Question For You 💕</title>
+<title>Una pregunta para ti 💕</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -51,7 +51,6 @@
     50% { background-position: 100% 50%; }
   }
 
-  /* Floating hearts background */
   .hearts {
     position: fixed;
     inset: 0;
@@ -74,12 +73,11 @@
     100% { transform: translateY(-110vh) rotate(360deg) scale(1.1); opacity: 0; }
   }
 
-  /* Main card */
   .card {
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 620px;
+    max-width: 640px;
     background: rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -88,6 +86,9 @@
     box-shadow: var(--shadow);
     padding: 48px 40px;
     overflow: hidden;
+  }
+  @media (max-width: 520px) {
+    .card { padding: 36px 24px; }
   }
 
   .card::before {
@@ -103,7 +104,6 @@
     100% { background-position: 200% 0%; }
   }
 
-  /* Progress dots */
   .progress {
     display: flex;
     justify-content: center;
@@ -126,7 +126,6 @@
     background: var(--pink-deep);
   }
 
-  /* Step container */
   .step {
     display: none;
     animation: stepIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -137,7 +136,6 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Typography */
   .eyebrow {
     font-family: 'Inter', sans-serif;
     font-size: 13px;
@@ -159,7 +157,7 @@
   }
   h2 {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(26px, 4vw, 34px);
+    font-size: clamp(24px, 4vw, 32px);
     font-weight: 700;
     color: var(--ink);
     text-align: center;
@@ -171,10 +169,9 @@
     color: var(--ink-soft);
     font-size: 16px;
     line-height: 1.6;
-    margin-bottom: 36px;
+    margin-bottom: 28px;
   }
 
-  /* Buttons */
   .btn-row {
     display: flex;
     gap: 16px;
@@ -202,6 +199,11 @@
   .btn-yes:hover {
     transform: translateY(-3px) scale(1.05);
     box-shadow: 0 14px 40px rgba(255, 107, 157, 0.65);
+  }
+  .btn-yes:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
   }
   .btn-no {
     background: white;
@@ -237,7 +239,7 @@
     background: white;
     border: 2px solid transparent;
     border-radius: 20px;
-    padding: 24px 12px;
+    padding: 22px 12px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -260,14 +262,10 @@
     box-shadow: 0 16px 40px rgba(214, 51, 132, 0.2);
   }
   .food-card:hover::before { opacity: 1; }
-  .food-card.selected {
-    border-color: var(--pink);
-    background: linear-gradient(135deg, var(--pink-mist), var(--pink-cream));
-  }
   .food-card .emoji {
-    font-size: 44px;
+    font-size: 42px;
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     position: relative;
     z-index: 1;
     transition: transform 0.3s;
@@ -281,10 +279,101 @@
     z-index: 1;
   }
 
-  /* Inputs */
-  .input-wrap {
-    margin-top: 24px;
+  /* Restaurant list */
+  .restaurant-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(135deg, var(--pink-mist), var(--pink-cream));
+    padding: 16px 20px;
+    border-radius: 16px;
+    margin-bottom: 16px;
   }
+  .restaurant-header .emoji { font-size: 32px; }
+  .restaurant-header .h-text { flex: 1; }
+  .restaurant-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .restaurant-header .h-sub {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .change-cat {
+    background: white;
+    border: 1px solid var(--pink-soft);
+    color: var(--pink-deep);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .change-cat:hover { background: var(--pink-soft); color: white; }
+
+  .restaurant-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 380px;
+    overflow-y: auto;
+    padding-right: 6px;
+  }
+  .restaurant-list::-webkit-scrollbar { width: 6px; }
+  .restaurant-list::-webkit-scrollbar-thumb { background: var(--pink-soft); border-radius: 3px; }
+
+  .restaurant-card {
+    background: white;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow-soft);
+  }
+  .restaurant-card:hover {
+    border-color: var(--pink-soft);
+    transform: translateX(4px);
+  }
+  .restaurant-card.selected {
+    border-color: var(--pink);
+    background: linear-gradient(135deg, var(--pink-mist), var(--pink-cream));
+  }
+  .restaurant-info { flex: 1; min-width: 0; }
+  .restaurant-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .restaurant-meta {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .restaurant-meta .pin { color: var(--pink-deep); font-weight: 500; }
+  .reviews-link {
+    background: white;
+    border: 1px solid var(--pink-soft);
+    color: var(--pink-deep);
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .reviews-link:hover { background: var(--pink); color: white; border-color: var(--pink); }
+
+  /* Inputs */
+  .input-wrap { margin-top: 24px; }
   label {
     display: block;
     font-size: 14px;
@@ -312,7 +401,6 @@
     box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.15);
   }
 
-  /* Time chips */
   .time-chips {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -344,11 +432,10 @@
     border-color: var(--pink);
   }
 
-  /* Summary */
   .summary {
     background: linear-gradient(135deg, var(--pink-mist), var(--pink-cream));
     border-radius: 20px;
-    padding: 28px;
+    padding: 24px;
     margin-top: 24px;
     border: 1px solid rgba(255, 107, 157, 0.2);
   }
@@ -356,26 +443,29 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
+    padding: 10px 0;
     border-bottom: 1px dashed var(--pink-soft);
+    gap: 12px;
   }
   .summary-row:last-child { border-bottom: none; }
   .summary-label {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--ink-soft);
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: 500;
+    flex-shrink: 0;
   }
   .summary-value {
     font-family: 'Playfair Display', serif;
-    font-size: 18px;
+    font-size: 16px;
     color: var(--pink-deep);
     font-weight: 600;
     text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  /* Success */
   .success-heart {
     font-size: 80px;
     text-align: center;
@@ -387,10 +477,15 @@
     50% { transform: scale(1.12); }
   }
 
+  .error-heart {
+    font-size: 60px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
   .center { text-align: center; }
   .mt-24 { margin-top: 24px; }
 
-  /* Confetti */
   .confetti {
     position: fixed;
     top: -20px;
@@ -404,13 +499,11 @@
     to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
   }
 
-  /* The No button shenanigans */
   #btnNo {
     transition: transform 0.2s ease, background 0.3s;
     position: relative;
   }
 
-  /* Sparkles */
   .sparkle {
     display: inline-block;
     animation: sparkle 2s ease-in-out infinite;
@@ -418,6 +511,22 @@
   @keyframes sparkle {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.6; transform: scale(0.85); }
+  }
+
+  /* Spinner */
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
 </style>
 </head>
@@ -434,60 +543,70 @@
     <div class="dot"></div>
   </div>
 
-  <!-- STEP 1: The big question -->
+  <!-- STEP 1: La gran pregunta -->
   <div class="step active" data-step="1">
-    <div class="eyebrow">A little question</div>
-    <h1>Will you go out <br/>with me? <span class="sparkle">💕</span></h1>
-    <p class="subtitle">I've been thinking about you, and I'd love to take you out. <br/>Pretty please?</p>
+    <div class="eyebrow">Una pequeña pregunta</div>
+    <h1>¿Quieres salir <br/>conmigo? <span class="sparkle">💕</span></h1>
+    <p class="subtitle">He estado pensando en ti, y me encantaría invitarte. <br/>¿Aceptas? 🌸</p>
     <div class="btn-row">
-      <button class="btn btn-yes" onclick="next()">Yes, I'd love to 💗</button>
+      <button class="btn btn-yes" onclick="next()">Sí, me encantaría 💗</button>
       <button class="btn btn-no" id="btnNo">No</button>
     </div>
   </div>
 
-  <!-- STEP 2: Food preference -->
+  <!-- STEP 2: Comida (con submenú de restaurantes) -->
   <div class="step" data-step="2">
-    <div class="eyebrow">Step 2 of 5</div>
-    <h2>What are you in the mood for?</h2>
-    <p class="subtitle">Pick whatever sounds good — I'll make it happen ✨</p>
-    <div class="food-grid" id="foodGrid">
-      <div class="food-card" data-food="Burgers"><span class="emoji">🍔</span><div class="label">Burgers</div></div>
-      <div class="food-card" data-food="Pizza"><span class="emoji">🍕</span><div class="label">Pizza</div></div>
-      <div class="food-card" data-food="Vegan"><span class="emoji">🥗</span><div class="label">Vegan</div></div>
-      <div class="food-card" data-food="Steak"><span class="emoji">🥩</span><div class="label">Steak</div></div>
-      <div class="food-card" data-food="Sushi"><span class="emoji">🍣</span><div class="label">Sushi</div></div>
-      <div class="food-card" data-food="Italian"><span class="emoji">🍝</span><div class="label">Italian</div></div>
-      <div class="food-card" data-food="Mexican"><span class="emoji">🌮</span><div class="label">Mexican</div></div>
-      <div class="food-card" data-food="Asian"><span class="emoji">🍜</span><div class="label">Asian</div></div>
-      <div class="food-card" data-food="Surprise me"><span class="emoji">🎁</span><div class="label">Surprise me</div></div>
+    <div class="eyebrow">Paso 2 de 5</div>
+
+    <!-- Sub-vista A: categorías -->
+    <div id="catView">
+      <h2>¿Qué se te antoja?</h2>
+      <p class="subtitle">Elige lo que sea, yo me encargo de lo demás ✨</p>
+      <div class="food-grid" id="foodGrid"></div>
+      <div class="center">
+        <button class="btn-back" onclick="prev()">← volver</button>
+      </div>
     </div>
-    <div class="center">
-      <button class="btn-back" onclick="prev()">← back</button>
+
+    <!-- Sub-vista B: restaurantes -->
+    <div id="restView" style="display:none">
+      <div class="restaurant-header">
+        <div class="emoji" id="catEmoji">🍔</div>
+        <div class="h-text">
+          <h3 id="catName">Hamburguesas</h3>
+          <div class="h-sub">Elige tu favorito</div>
+        </div>
+        <button class="change-cat" onclick="backToCategories()">Cambiar</button>
+      </div>
+      <div class="restaurant-list" id="restList"></div>
+      <div class="btn-row">
+        <button class="btn btn-yes" id="confirmRestBtn" onclick="confirmRestaurant()" disabled>Continuar →</button>
+      </div>
     </div>
   </div>
 
-  <!-- STEP 3: Date -->
+  <!-- STEP 3: Fecha -->
   <div class="step" data-step="3">
-    <div class="eyebrow">Step 3 of 5</div>
-    <h2>When works for you?</h2>
-    <p class="subtitle">Pick the day you'd like to see me 🌸</p>
+    <div class="eyebrow">Paso 3 de 5</div>
+    <h2>¿Cuándo te queda bien?</h2>
+    <p class="subtitle">Elige el día en que quieres verme 🌸</p>
     <div class="input-wrap">
-      <label for="dateInput">Date</label>
+      <label for="dateInput">Fecha</label>
       <input type="date" id="dateInput" />
     </div>
     <div class="btn-row">
-      <button class="btn btn-yes" onclick="confirmDate()">Continue →</button>
+      <button class="btn btn-yes" onclick="confirmDate()">Continuar →</button>
     </div>
     <div class="center">
-      <button class="btn-back" onclick="prev()">← back</button>
+      <button class="btn-back" onclick="prev()">← volver</button>
     </div>
   </div>
 
-  <!-- STEP 4: Time -->
+  <!-- STEP 4: Hora -->
   <div class="step" data-step="4">
-    <div class="eyebrow">Step 4 of 5</div>
-    <h2>And what time?</h2>
-    <p class="subtitle">Pick a time that feels right ⏰</p>
+    <div class="eyebrow">Paso 4 de 5</div>
+    <h2>¿Y a qué hora?</h2>
+    <p class="subtitle">Elige una hora que te acomode ⏰</p>
     <div class="time-chips" id="timeChips">
       <button class="chip" data-time="12:00">12:00 PM</button>
       <button class="chip" data-time="13:00">1:00 PM</button>
@@ -499,62 +618,162 @@
       <button class="chip" data-time="22:00">10:00 PM</button>
     </div>
     <div class="input-wrap">
-      <label for="timeInput">Or pick your own:</label>
+      <label for="timeInput">O elige otra hora:</label>
       <input type="time" id="timeInput" />
     </div>
     <div class="btn-row">
-      <button class="btn btn-yes" onclick="confirmTime()">Continue →</button>
+      <button class="btn btn-yes" onclick="confirmTime()">Continuar →</button>
     </div>
     <div class="center">
-      <button class="btn-back" onclick="prev()">← back</button>
+      <button class="btn-back" onclick="prev()">← volver</button>
     </div>
   </div>
 
   <!-- STEP 5: Email -->
   <div class="step" data-step="5">
-    <div class="eyebrow">Step 5 of 5</div>
-    <h2>Last thing 💌</h2>
-    <p class="subtitle">Drop your email so I can send you the confirmation</p>
+    <div class="eyebrow">Paso 5 de 5</div>
+    <h2>Solo una cosita más 💌</h2>
+    <p class="subtitle">Déjame tu correo para mandarte la confirmación</p>
     <div class="input-wrap">
-      <label for="emailInput">Your email</label>
-      <input type="email" id="emailInput" placeholder="you@email.com" />
+      <label for="emailInput">Tu correo</label>
+      <input type="email" id="emailInput" placeholder="tu@correo.com" />
+    </div>
+    <div class="input-wrap">
+      <label for="nameInput">Tu nombre <span style="color:var(--ink-soft);font-weight:400">(opcional)</span></label>
+      <input type="email" id="nameInput" placeholder="¿Cómo te llamas?" />
     </div>
     <div class="summary" id="summaryPreview"></div>
     <div class="btn-row">
-      <button class="btn btn-yes" onclick="sendConfirmation()">Send confirmation 💕</button>
+      <button class="btn btn-yes" id="sendBtn" onclick="sendConfirmation()">Enviar confirmación 💕</button>
     </div>
     <div class="center">
-      <button class="btn-back" onclick="prev()">← back</button>
+      <button class="btn-back" onclick="prev()">← volver</button>
     </div>
   </div>
 
-  <!-- STEP 6: Success -->
+  <!-- STEP 6: Éxito -->
   <div class="step" data-step="6">
     <div class="success-heart">💖</div>
-    <h1>It's a date!</h1>
-    <p class="subtitle">I just opened your email app with the confirmation — <br/>just hit send and we're official ✨</p>
+    <h1>¡Es una cita!</h1>
+    <p class="subtitle">Recibí tu confirmación. <br/>Te voy a escribir muy pronto para terminar de coordinar ✨</p>
     <div class="summary" id="finalSummary"></div>
-    <p class="subtitle mt-24" style="font-size: 14px;">Can't wait to see you. 💕</p>
+    <p class="subtitle mt-24" style="font-size: 14px;">No puedo esperar a verte. 💕</p>
+  </div>
+
+  <!-- STEP 7: Error -->
+  <div class="step" data-step="7">
+    <div class="error-heart">💔</div>
+    <h2>Algo salió mal</h2>
+    <p class="subtitle" id="errorMsg">No pudimos enviar tu confirmación. Intenta de nuevo, por favor.</p>
+    <div class="btn-row">
+      <button class="btn btn-yes" onclick="showStep(5)">Intentar de nuevo</button>
+    </div>
   </div>
 
 </div>
 
 <script>
-  // ====== State ======
+  // ====== Configuración ======
+  // FormSubmit.co envía el formulario directo a este correo.
+  // IMPORTANTE: la primera vez que se envíe el form, recibirás un correo
+  // de "confirma este endpoint" — haz click en el link para activarlo.
+  const RECIPIENT_EMAIL = 'desarrolladorbi@sportlife.cl';
+
+  // ====== Datos de restaurantes (Santiago, Chile) ======
+  const categories = [
+    { key: 'Hamburguesas', emoji: '🍔' },
+    { key: 'Pizza',        emoji: '🍕' },
+    { key: 'Vegano',       emoji: '🥗' },
+    { key: 'Parrilla',     emoji: '🥩' },
+    { key: 'Sushi',        emoji: '🍣' },
+    { key: 'Italiana',     emoji: '🍝' },
+    { key: 'Mexicana',     emoji: '🌮' },
+    { key: 'Asiática',     emoji: '🍜' },
+    { key: 'Sorpréndeme',  emoji: '🎁' }
+  ];
+
+  const restaurants = {
+    'Hamburguesas': [
+      { name: 'MIT Burger',         area: 'Lastarria / Bellas Artes', vibe: 'Clásica del centro, pan brioche y papas top' },
+      { name: 'La Burguesía',       area: 'Providencia / Las Condes', vibe: 'Smash burgers con tocino crujiente' },
+      { name: 'La Birra',           area: 'Lastarria',                vibe: 'Estilo argentino + cervezas artesanales' },
+      { name: "Dipsy's Backyard",   area: 'Vitacura',                 vibe: 'Patio relajado, smash premium' },
+      { name: 'Streat Burger',      area: 'Varias sucursales',        vibe: 'Gourmet rápida, casual' },
+      { name: 'Buns',               area: 'Vitacura',                 vibe: 'Burgers premium, ingredientes locales' },
+      { name: "Tony's Burger",      area: 'Providencia',              vibe: 'Americana clásica al estilo diner' }
+    ],
+    'Pizza': [
+      { name: 'Tiramisú',           area: 'Providencia',              vibe: 'Italiana tradicional, ambiente cálido' },
+      { name: "Lucciano's",         area: 'Varias sucursales',        vibe: 'Pizza al horno de leña' },
+      { name: 'Mami Tana',          area: 'Providencia',              vibe: 'Napolitana con masa madre' },
+      { name: 'Cosa Nostra',        area: 'Vitacura',                 vibe: 'Italiana clásica + buena carta de vinos' },
+      { name: 'Pizzería Trazzi',    area: 'Lastarria',                vibe: 'Artesanal en barrio bohemio' },
+      { name: 'Holm',               area: 'Vitacura',                 vibe: 'Pizza nórdica-italiana, fusión moderna' }
+    ],
+    'Vegano': [
+      { name: 'El Huerto',          area: 'Providencia',              vibe: 'Clásico vegetariano con terraza' },
+      { name: 'Quínoa',             area: 'Providencia',              vibe: 'Bowls sanos y jugos frescos' },
+      { name: 'La Diana',           area: 'Barrio Italia',            vibe: 'Cocina creativa de mercado' },
+      { name: 'Shoku',              area: 'Las Condes',               vibe: 'Asian fusion 100% plant-based' },
+      { name: 'Lechuga',            area: 'Providencia',              vibe: 'Veggie casual para almuerzo' },
+      { name: 'Sukha',              area: 'Providencia',              vibe: 'Cocina ayurvédica vegetariana' }
+    ],
+    'Parrilla': [
+      { name: 'Happening',          area: 'Vitacura',                 vibe: 'Clásico del bife, ambiente formal' },
+      { name: 'Don Carlos',         area: 'Las Condes',               vibe: 'Cortes premium, parrilla tradicional' },
+      { name: 'Las Vacas Gordas',   area: 'Vitacura',                 vibe: 'Parrilla familiar, porciones generosas' },
+      { name: 'Cuerovaca',          area: 'Vitacura',                 vibe: 'Asado moderno + wine bar' },
+      { name: 'La Cabrera',         area: 'Las Condes',               vibe: 'Parrilla argentina premium' },
+      { name: 'Patagonia Grill',    area: 'Vitacura',                 vibe: 'Cordero y cortes patagónicos' }
+    ],
+    'Sushi': [
+      { name: 'Osaka',              area: 'Vitacura',                 vibe: 'Nikkei elegante, premium' },
+      { name: 'Hanzo',              area: 'Vitacura',                 vibe: 'Nikkei premium, ambiente cool' },
+      { name: 'Niu Sushi',          area: 'Varias sucursales',        vibe: 'Sushi moderno y casual' },
+      { name: 'Wakai',              area: 'Providencia',              vibe: 'Japonés auténtico, omakase' },
+      { name: 'Kintaro',            area: 'Providencia',              vibe: 'Clásico japonés tradicional' },
+      { name: 'Akari',              area: 'Las Condes',               vibe: 'Sushi fusión moderno' }
+    ],
+    'Italiana': [
+      { name: 'Cosa Nostra',        area: 'Vitacura',                 vibe: 'Romántica y clásica italiana' },
+      { name: 'Tiramisú',           area: 'Providencia',              vibe: 'Pastas y pizzas con encanto' },
+      { name: 'Pasta e Vino',       area: 'Vitacura',                 vibe: 'Pastas frescas + vinos italianos' },
+      { name: 'Da Dino',            area: 'Vitacura',                 vibe: 'Trattoria tradicional' },
+      { name: 'Eladio',             area: 'Varias sucursales',        vibe: 'Italiano-chileno casual' },
+      { name: 'Pinpilinpausha',     area: 'Providencia',              vibe: 'Vasco-italiana, íntima' }
+    ],
+    'Mexicana': [
+      { name: 'Plaza Garibaldi',    area: 'Providencia',              vibe: 'Cantina con mariachis, super festivo' },
+      { name: 'Tres Peces',         area: 'Lastarria',                vibe: 'Tacos modernos y mezcal' },
+      { name: 'Itacate',            area: 'Providencia',              vibe: 'Auténtica mexicana' },
+      { name: 'Como Agua para Chocolate', area: 'Bellavista',         vibe: 'Romántica, decoración espectacular' },
+      { name: 'El Sombrero',        area: 'Varias sucursales',        vibe: 'Casual y entretenida' }
+    ],
+    'Asiática': [
+      { name: 'Yindam',             area: 'Bellas Artes',             vibe: 'Sichuan picante, china auténtica' },
+      { name: 'Ozaki',              area: 'Vitacura',                 vibe: 'Japonesa moderna' },
+      { name: 'Shoku',              area: 'Las Condes',               vibe: 'Asian fusion con base vegetal' },
+      { name: 'Damajuana',          area: 'Lastarria',                vibe: 'Tailandesa-vietnamita, sabores frescos' },
+      { name: 'Hanzo',              area: 'Vitacura',                 vibe: 'Nikkei fusión peruano-japonés' }
+    ],
+    'Sorpréndeme': [
+      { name: '¡Tú eliges sorpresa!', area: 'Santiago', vibe: 'Confío plenamente en ti — sorpréndeme 🎁' }
+    ]
+  };
+
+  // ====== Estado ======
   const state = {
     step: 1,
-    food: null,
+    category: null,
+    restaurant: null,
     date: null,
     time: null,
     timeLabel: null,
-    email: null
+    email: null,
+    name: null
   };
 
-  // ====== EDIT THIS: your email (receives a CC of the confirmation) ======
-  const HIS_EMAIL = 'desarrolladorbi@sportlife.cl';
-  const HIS_NAME  = ''; // optional, leave blank or set your name
-
-  // ====== Navigation ======
+  // ====== Navegación ======
   function showStep(n) {
     document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
     document.querySelector(`.step[data-step="${n}"]`).classList.add('active');
@@ -570,7 +789,7 @@
   function next() { showStep(state.step + 1); }
   function prev() { if (state.step > 1) showStep(state.step - 1); }
 
-  // ====== Step 1: No button runs away ======
+  // ====== Paso 1: botón "No" que se escapa ======
   const btnNo = document.getElementById('btnNo');
   let dodgeCount = 0;
   function dodge() {
@@ -582,28 +801,79 @@
     const y = (Math.random() - 0.5) * 2 * maxY;
     btnNo.style.transform = `translate(${x}px, ${y}px)`;
     dodgeCount++;
-    if (dodgeCount === 3) btnNo.textContent = "you can't catch me 😜";
-    if (dodgeCount === 6) btnNo.textContent = "say yes already 💕";
-    if (dodgeCount === 9) btnNo.textContent = "I know you want to 😉";
+    if (dodgeCount === 3) btnNo.textContent = "no me atrapas 😜";
+    if (dodgeCount === 6) btnNo.textContent = "di que sí 💕";
+    if (dodgeCount === 9) btnNo.textContent = "sé que quieres 😉";
   }
   btnNo.addEventListener('mouseenter', dodge);
   btnNo.addEventListener('touchstart', (e) => { e.preventDefault(); dodge(); });
   btnNo.addEventListener('focus', dodge);
   btnNo.addEventListener('click', dodge);
 
-  // ====== Step 2: Food selection ======
-  document.querySelectorAll('.food-card').forEach(card => {
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.food-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      state.food = card.dataset.food;
-      setTimeout(next, 350);
-    });
+  // ====== Paso 2: categorías y restaurantes ======
+  const foodGrid = document.getElementById('foodGrid');
+  categories.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'food-card';
+    div.dataset.cat = c.key;
+    div.innerHTML = `<span class="emoji">${c.emoji}</span><div class="label">${c.key}</div>`;
+    div.addEventListener('click', () => selectCategory(c.key));
+    foodGrid.appendChild(div);
   });
 
-  // ====== Step 3: Date ======
+  function selectCategory(catKey) {
+    state.category = catKey;
+    state.restaurant = null;
+    const cat = categories.find(c => c.key === catKey);
+    document.getElementById('catEmoji').textContent = cat.emoji;
+    document.getElementById('catName').textContent = cat.key;
+
+    // Render lista
+    const list = document.getElementById('restList');
+    list.innerHTML = '';
+    (restaurants[catKey] || []).forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'restaurant-card';
+      card.dataset.name = r.name;
+      const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(r.name + ' ' + r.area + ' Santiago Chile')}`;
+      card.innerHTML = `
+        <div class="restaurant-info">
+          <div class="restaurant-name">${r.name}</div>
+          <div class="restaurant-meta"><span class="pin">📍 ${r.area}</span> · ${r.vibe}</div>
+        </div>
+        <a href="${mapsUrl}" target="_blank" rel="noopener" class="reviews-link" onclick="event.stopPropagation()">Reseñas ↗</a>
+      `;
+      card.addEventListener('click', () => selectRestaurant(r.name, card));
+      list.appendChild(card);
+    });
+
+    // Toggle vistas
+    document.getElementById('catView').style.display = 'none';
+    document.getElementById('restView').style.display = 'block';
+    document.getElementById('confirmRestBtn').disabled = true;
+  }
+
+  function selectRestaurant(name, cardEl) {
+    state.restaurant = name;
+    document.querySelectorAll('.restaurant-card').forEach(c => c.classList.remove('selected'));
+    cardEl.classList.add('selected');
+    document.getElementById('confirmRestBtn').disabled = false;
+  }
+
+  function backToCategories() {
+    document.getElementById('catView').style.display = 'block';
+    document.getElementById('restView').style.display = 'none';
+    state.category = null;
+    state.restaurant = null;
+  }
+
+  function confirmRestaurant() {
+    if (!state.restaurant) return;
+    next();
+  }
+
+  // ====== Paso 3: Fecha ======
   const dateInput = document.getElementById('dateInput');
-  // Set min date to today
   const today = new Date();
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -620,7 +890,7 @@
     next();
   }
 
-  // ====== Step 4: Time ======
+  // ====== Paso 4: Hora ======
   const timeInput = document.getElementById('timeInput');
   document.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
@@ -655,32 +925,37 @@
     next();
   }
 
-  // ====== Step 5: Summary + Email ======
+  // ====== Paso 5: Resumen + Envío ======
   function formatDate(iso) {
     if (!iso) return '';
     const d = new Date(iso + 'T00:00:00');
-    return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    return d.toLocaleDateString('es-CL', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   }
 
   function renderSummaryPreview() {
     document.getElementById('summaryPreview').innerHTML = `
       <div class="summary-row">
-        <span class="summary-label">Food</span>
-        <span class="summary-value">${state.food || '—'}</span>
+        <span class="summary-label">Comida</span>
+        <span class="summary-value">${state.category || '—'}</span>
       </div>
       <div class="summary-row">
-        <span class="summary-label">Date</span>
+        <span class="summary-label">Lugar</span>
+        <span class="summary-value">${state.restaurant || '—'}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Fecha</span>
         <span class="summary-value">${formatDate(state.date)}</span>
       </div>
       <div class="summary-row">
-        <span class="summary-label">Time</span>
+        <span class="summary-label">Hora</span>
         <span class="summary-value">${state.timeLabel}</span>
       </div>
     `;
   }
 
-  function sendConfirmation() {
+  async function sendConfirmation() {
     const email = document.getElementById('emailInput').value.trim();
+    const name  = document.getElementById('nameInput').value.trim();
     const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     if (!valid) {
       document.getElementById('emailInput').style.borderColor = '#ff4d6d';
@@ -688,57 +963,77 @@
       return;
     }
     state.email = email;
+    state.name = name;
 
-    // Build email
-    const subject = encodeURIComponent('Our Date is Confirmed 💕');
-    const bodyLines = [
-      'Hi beautiful,',
-      '',
-      "Just confirming our date — I can't wait to see you 💕",
-      '',
-      '─────────────────────────',
-      `  🍽️  Food:  ${state.food}`,
-      `  📅  Date:  ${formatDate(state.date)}`,
-      `  ⏰  Time:  ${state.timeLabel}`,
-      '─────────────────────────',
-      '',
-      'See you then. ✨',
-      HIS_NAME ? `— ${HIS_NAME}` : ''
-    ];
-    const body = encodeURIComponent(bodyLines.join('\n'));
+    const sendBtn = document.getElementById('sendBtn');
+    const originalText = sendBtn.innerHTML;
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = '<span class="spinner"></span>Enviando...';
 
-    // mailto with TO = her, CC = him
-    const mailto = `mailto:${encodeURIComponent(email)}?cc=${encodeURIComponent(HIS_EMAIL)}&subject=${subject}&body=${body}`;
+    // Payload para FormSubmit
+    const payload = {
+      _subject: `💕 ¡Tienes una cita! ${name ? '— ' + name : ''}`,
+      _template: 'table',
+      _captcha: 'false',
+      Nombre:      name || '(no compartido)',
+      Email:       email,
+      Comida:      state.category,
+      Restaurante: state.restaurant,
+      Fecha:       formatDate(state.date),
+      Hora:        state.timeLabel,
+      Mensaje:     '¡Acepté la cita! 💕 Escríbeme para coordinar los últimos detalles.'
+    };
 
-    // Render final summary
+    try {
+      const res = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(RECIPIENT_EMAIL)}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success || res.ok) {
+        renderFinalSummary();
+        showStep(6);
+        fireConfetti();
+      } else {
+        throw new Error(data.message || 'Error desconocido');
+      }
+    } catch (err) {
+      document.getElementById('errorMsg').textContent =
+        'No pudimos enviar tu confirmación: ' + (err.message || 'error de red') +
+        '. Por favor intenta de nuevo.';
+      showStep(7);
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = originalText;
+    }
+  }
+
+  function renderFinalSummary() {
     document.getElementById('finalSummary').innerHTML = `
       <div class="summary-row">
-        <span class="summary-label">Food</span>
-        <span class="summary-value">${state.food}</span>
+        <span class="summary-label">Comida</span>
+        <span class="summary-value">${state.category}</span>
       </div>
       <div class="summary-row">
-        <span class="summary-label">Date</span>
+        <span class="summary-label">Lugar</span>
+        <span class="summary-value">${state.restaurant}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Fecha</span>
         <span class="summary-value">${formatDate(state.date)}</span>
       </div>
       <div class="summary-row">
-        <span class="summary-label">Time</span>
+        <span class="summary-label">Hora</span>
         <span class="summary-value">${state.timeLabel}</span>
       </div>
-      <div class="summary-row">
-        <span class="summary-label">Confirmation to</span>
-        <span class="summary-value">${email}</span>
-      </div>
     `;
-
-    // Trigger mail client
-    window.location.href = mailto;
-
-    // Show success screen + confetti
-    showStep(6);
-    fireConfetti();
   }
 
-  // ====== Floating hearts ======
+  // ====== Corazones flotantes ======
   function spawnHearts() {
     const container = document.getElementById('hearts');
     const symbols = ['💕', '💗', '💖', '🌸', '✨', '💞'];
@@ -755,7 +1050,7 @@
   }
   spawnHearts();
 
-  // ====== Confetti ======
+  // ====== Confeti ======
   function fireConfetti() {
     const colors = ['#ff6b9d', '#d63384', '#ffc1d6', '#ffe0ec', '#e8a4b8', '#ffffff'];
     for (let i = 0; i < 80; i++) {
