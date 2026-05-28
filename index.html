@@ -315,11 +315,107 @@
   }
   .change-cat:hover { background: var(--pink-soft); color: white; }
 
+  .search-wrap {
+    position: relative;
+    margin-bottom: 14px;
+  }
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  .search-input {
+    width: 100%;
+    padding: 14px 38px 14px 42px;
+    border: 2px solid var(--pink-soft);
+    border-radius: 14px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    background: white;
+    outline: none;
+    transition: all 0.3s;
+  }
+  .search-input:focus {
+    border-color: var(--pink);
+    box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.15);
+  }
+  .clear-search {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--pink-soft);
+    color: var(--pink-deep);
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .clear-search:hover { background: var(--pink); color: white; }
+
+  .list-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+    padding-left: 4px;
+    font-weight: 500;
+  }
+
+  .search-empty {
+    text-align: center;
+    padding: 24px 16px;
+    background: white;
+    border-radius: 16px;
+    border: 2px dashed var(--pink-soft);
+  }
+  .search-empty p {
+    margin-bottom: 14px;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  .btn-use-custom {
+    background: var(--pink-mist);
+    color: var(--pink-deep);
+    border: 2px solid var(--pink);
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .btn-use-custom:hover {
+    background: var(--pink);
+    color: white;
+  }
+
+  .search-loading {
+    text-align: center;
+    padding: 16px;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+
   .restaurant-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-height: 380px;
+    max-height: 320px;
     overflow-y: auto;
     padding-right: 6px;
   }
@@ -501,9 +597,18 @@
   }
 
   #btnNo {
-    transition: transform 0.2s ease, background 0.3s;
+    transition: left 0.18s cubic-bezier(0.2, 0.8, 0.2, 1),
+                top  0.18s cubic-bezier(0.2, 0.8, 0.2, 1),
+                background 0.3s;
     position: relative;
   }
+  #btnNo.flying {
+    position: fixed !important;
+    z-index: 9999;
+    margin: 0 !important;
+  }
+  .no-slot { display: none; }
+  .no-slot.active { display: inline-block; }
 
   .sparkle {
     display: inline-block;
@@ -550,7 +655,8 @@
     <h1>¿Quieres salir <br/>conmigo? <span class="sparkle">💕</span></h1>
     <p class="subtitle">He estado pensando en ti, y me encantaría invitarte. <br/>¿Aceptas? 🌸</p>
     <div class="btn-row">
-      <button class="btn btn-yes" onclick="next()">Sí, me encantaría 💗</button>
+      <button class="btn btn-yes" onclick="next()">Sí, salgamos</button>
+      <span id="noSlot" class="no-slot"></span>
       <button class="btn btn-no" id="btnNo">No</button>
     </div>
   </div>
@@ -575,10 +681,16 @@
         <div class="emoji" id="catEmoji">🍔</div>
         <div class="h-text">
           <h3 id="catName">Hamburguesas</h3>
-          <div class="h-sub">Elige tu favorito</div>
+          <div class="h-sub">Elige uno o busca tu favorito</div>
         </div>
         <button class="change-cat" onclick="backToCategories()">Cambiar</button>
       </div>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="restSearch" class="search-input" placeholder="¿Tienes un lugar en mente? Búscalo..." autocomplete="off" />
+        <button id="clearSearch" class="clear-search" type="button" style="display:none" aria-label="Limpiar">✕</button>
+      </div>
+      <div class="list-label" id="listLabel">Sugerencias</div>
       <div class="restaurant-list" id="restList"></div>
       <div class="btn-row">
         <button class="btn btn-yes" id="confirmRestBtn" onclick="confirmRestaurant()" disabled>Continuar →</button>
@@ -677,9 +789,9 @@
   // ====== Configuración EmailJS ======
   // Reemplaza estos 3 valores con los tuyos del dashboard de EmailJS:
   //   https://dashboard.emailjs.com/admin
-  const EMAILJS_PUBLIC_KEY  = 'REPLACE_WITH_PUBLIC_KEY';
-  const EMAILJS_SERVICE_ID  = 'REPLACE_WITH_SERVICE_ID';
-  const EMAILJS_TEMPLATE_ID = 'REPLACE_WITH_TEMPLATE_ID';
+  const EMAILJS_PUBLIC_KEY  = 'TnrZv1r-Vwcc08D9Q';
+  const EMAILJS_SERVICE_ID  = 'service_03vo04o';
+  const EMAILJS_TEMPLATE_ID = 'template_14590bg';
 
   // Tu nombre (aparece como remitente del correo)
   const FROM_NAME = 'Lillo';
@@ -798,22 +910,70 @@
   function next() { showStep(state.step + 1); }
   function prev() { if (state.step > 1) showStep(state.step - 1); }
 
-  // ====== Paso 1: botón "No" que se escapa ======
+  // ====== Paso 1: botón "No" que se escapa por toda la pantalla ======
   const btnNo = document.getElementById('btnNo');
+  const noSlot = document.getElementById('noSlot');
   let dodgeCount = 0;
-  function dodge() {
-    const card = document.querySelector('.card').getBoundingClientRect();
-    const btn = btnNo.getBoundingClientRect();
-    const maxX = (card.width / 2) - btn.width - 20;
-    const maxY = 80;
-    const x = (Math.random() - 0.5) * 2 * maxX;
-    const y = (Math.random() - 0.5) * 2 * maxY;
-    btnNo.style.transform = `translate(${x}px, ${y}px)`;
-    dodgeCount++;
-    if (dodgeCount === 3) btnNo.textContent = "no me atrapas 😜";
-    if (dodgeCount === 6) btnNo.textContent = "di que sí 💕";
-    if (dodgeCount === 9) btnNo.textContent = "sé que quieres 😉";
+
+  function detachNo() {
+    if (btnNo.classList.contains('flying')) return;
+    const rect = btnNo.getBoundingClientRect();
+    // Placeholder mantiene el espacio en la fila para que "Sí" no se mueva
+    noSlot.style.width  = rect.width + 'px';
+    noSlot.style.height = rect.height + 'px';
+    noSlot.classList.add('active');
+    btnNo.style.left = rect.left + 'px';
+    btnNo.style.top  = rect.top + 'px';
+    btnNo.classList.add('flying');
   }
+
+  function dodge() {
+    detachNo();
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const btnW = btnNo.offsetWidth;
+    const btnH = btnNo.offsetHeight;
+    // Mantiene el botón a >=120px del cursor para evitar atrapes inmediatos
+    const margin = 16;
+    let x, y, tries = 0;
+    do {
+      x = Math.random() * (w - btnW - margin * 2) + margin;
+      y = Math.random() * (h - btnH - margin * 2) + margin;
+      tries++;
+    } while (tries < 6 && lastMouse && Math.hypot(x - lastMouse.x, y - lastMouse.y) < 140);
+    btnNo.style.left = x + 'px';
+    btnNo.style.top  = y + 'px';
+
+    dodgeCount++;
+    const taunts = [
+      null, null,
+      "no me atrapas 😜",
+      "💨💨💨",
+      "casi! 😏",
+      "di que sí 💕",
+      "ya po...",
+      "no insistas 😂",
+      "sé que quieres 😉",
+      "estoy esperando un 'sí' ✨",
+      "💖",
+      "ok, una más...",
+      "ya, en serio jajaja",
+      "🥺",
+      "👀"
+    ];
+    if (taunts[dodgeCount]) btnNo.textContent = taunts[dodgeCount];
+  }
+
+  let lastMouse = null;
+  window.addEventListener('mousemove', (e) => {
+    lastMouse = { x: e.clientX, y: e.clientY };
+    if (btnNo.classList.contains('flying')) {
+      const rect = btnNo.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      if (Math.hypot(e.clientX - cx, e.clientY - cy) < 80) dodge();
+    }
+  });
   btnNo.addEventListener('mouseenter', dodge);
   btnNo.addEventListener('touchstart', (e) => { e.preventDefault(); dodge(); });
   btnNo.addEventListener('focus', dodge);
@@ -836,30 +996,43 @@
     const cat = categories.find(c => c.key === catKey);
     document.getElementById('catEmoji').textContent = cat.emoji;
     document.getElementById('catName').textContent = cat.key;
-
-    // Render lista
-    const list = document.getElementById('restList');
-    list.innerHTML = '';
-    (restaurants[catKey] || []).forEach(r => {
-      const card = document.createElement('div');
-      card.className = 'restaurant-card';
-      card.dataset.name = r.name;
-      const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(r.name + ' ' + r.area + ' Santiago Chile')}`;
-      card.innerHTML = `
-        <div class="restaurant-info">
-          <div class="restaurant-name">${r.name}</div>
-          <div class="restaurant-meta"><span class="pin">📍 ${r.area}</span> · ${r.vibe}</div>
-        </div>
-        <a href="${mapsUrl}" target="_blank" rel="noopener" class="reviews-link" onclick="event.stopPropagation()">Reseñas ↗</a>
-      `;
-      card.addEventListener('click', () => selectRestaurant(r.name, card));
-      list.appendChild(card);
-    });
-
+    document.getElementById('restSearch').value = '';
+    document.getElementById('clearSearch').style.display = 'none';
+    renderCurated();
     // Toggle vistas
     document.getElementById('catView').style.display = 'none';
     document.getElementById('restView').style.display = 'block';
     document.getElementById('confirmRestBtn').disabled = true;
+  }
+
+  function renderCurated() {
+    const catKey = state.category;
+    document.getElementById('listLabel').textContent = 'Sugerencias';
+    const list = document.getElementById('restList');
+    list.innerHTML = '';
+    (restaurants[catKey] || []).forEach(r => {
+      const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(r.name + ' ' + r.area + ' Santiago Chile')}`;
+      const card = buildCard(r.name, `📍 ${r.area} · ${r.vibe}`, mapsUrl);
+      list.appendChild(card);
+    });
+  }
+
+  function buildCard(name, metaHtml, mapsUrl) {
+    const card = document.createElement('div');
+    card.className = 'restaurant-card';
+    card.innerHTML = `
+      <div class="restaurant-info">
+        <div class="restaurant-name">${escapeHtml(name)}</div>
+        <div class="restaurant-meta">${metaHtml}</div>
+      </div>
+      <a href="${mapsUrl}" target="_blank" rel="noopener" class="reviews-link" onclick="event.stopPropagation()">Mapa ↗</a>
+    `;
+    card.addEventListener('click', () => selectRestaurant(name, card));
+    return card;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
   function selectRestaurant(name, cardEl) {
@@ -874,6 +1047,103 @@
     document.getElementById('restView').style.display = 'none';
     state.category = null;
     state.restaurant = null;
+  }
+
+  // ====== Búsqueda libre de restaurantes (Photon / OSM, sin API key) ======
+  const restSearch = document.getElementById('restSearch');
+  const clearSearchBtn = document.getElementById('clearSearch');
+  let searchTimer = null;
+  let searchSeq = 0;
+
+  restSearch.addEventListener('input', () => {
+    const q = restSearch.value.trim();
+    clearSearchBtn.style.display = q ? 'flex' : 'none';
+    clearTimeout(searchTimer);
+    if (q.length === 0) {
+      renderCurated();
+      return;
+    }
+    if (q.length < 2) return;
+    searchTimer = setTimeout(() => doSearch(q), 350);
+  });
+
+  clearSearchBtn.addEventListener('click', () => {
+    restSearch.value = '';
+    clearSearchBtn.style.display = 'none';
+    renderCurated();
+    restSearch.focus();
+  });
+
+  async function doSearch(query) {
+    document.getElementById('listLabel').textContent = `Resultados para "${query}"`;
+    const list = document.getElementById('restList');
+    list.innerHTML = '<div class="search-loading">Buscando lugares...</div>';
+    const mySeq = ++searchSeq;
+    // Photon (komoot) — buscador geográfico libre basado en OSM
+    // lat/lon = Santiago, Chile (mejora ranking de resultados cercanos)
+    const tags = ['amenity:restaurant','amenity:cafe','amenity:fast_food','amenity:bar','amenity:pub','amenity:food_court','amenity:ice_cream']
+      .map(t => `osm_tag=${encodeURIComponent(t)}`).join('&');
+    const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=12&lat=-33.4489&lon=-70.6693&${tags}`;
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      if (mySeq !== searchSeq) return; // resultado obsoleto
+      const features = (data.features || []).filter(f => {
+        const c = f.properties && f.properties.country;
+        return !c || c === 'Chile';
+      });
+      renderSearchResults(query, features);
+    } catch (e) {
+      if (mySeq !== searchSeq) return;
+      list.innerHTML = `
+        <div class="search-empty">
+          <p>No pudimos buscar ahora. Sin conexión o el servicio está caído.</p>
+          <button class="btn-use-custom" id="useCustomBtnErr">Usar "${escapeHtml(query)}" igual</button>
+        </div>
+      `;
+      document.getElementById('useCustomBtnErr').onclick = () => useCustomRestaurant(query);
+    }
+  }
+
+  function renderSearchResults(query, features) {
+    const list = document.getElementById('restList');
+    list.innerHTML = '';
+    if (features.length === 0) {
+      list.innerHTML = `
+        <div class="search-empty">
+          <p>No encontramos "${escapeHtml(query)}" en el mapa.<br>¿Lo usamos así igual?</p>
+          <button class="btn-use-custom" id="useCustomBtn">Usar "${escapeHtml(query)}"</button>
+        </div>
+      `;
+      document.getElementById('useCustomBtn').onclick = () => useCustomRestaurant(query);
+      return;
+    }
+    features.forEach(f => {
+      const p = f.properties || {};
+      const name = p.name || query;
+      const parts = [];
+      if (p.street) parts.push(p.street + (p.housenumber ? ' ' + p.housenumber : ''));
+      if (p.city || p.locality) parts.push(p.city || p.locality);
+      if (p.state && !parts.includes(p.state)) parts.push(p.state);
+      const address = parts.join(', ') || 'Santiago, Chile';
+      const meta = `<span class="pin">📍 ${escapeHtml(address)}</span>`;
+      const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(name + ' ' + address)}`;
+      const card = buildCard(name, meta, mapsUrl);
+      list.appendChild(card);
+    });
+  }
+
+  function useCustomRestaurant(name) {
+    // Selección manual de un nombre escrito por ella
+    state.restaurant = name;
+    document.getElementById('confirmRestBtn').disabled = false;
+    const list = document.getElementById('restList');
+    list.innerHTML = '';
+    const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(name + ' Santiago Chile')}`;
+    const card = buildCard(name, '<span class="pin">📍 Elegido por ti</span>', mapsUrl);
+    card.classList.add('selected');
+    list.appendChild(card);
+    document.getElementById('listLabel').textContent = 'Tu elección';
   }
 
   function confirmRestaurant() {
