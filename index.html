@@ -597,14 +597,14 @@
   }
 
   #btnNo {
-    transition: left 0.18s cubic-bezier(0.2, 0.8, 0.2, 1),
-                top  0.18s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transition: left 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+                top  0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
                 background 0.3s;
     position: relative;
   }
   #btnNo.flying {
-    position: fixed !important;
-    z-index: 9999;
+    position: absolute !important;
+    z-index: 10;
     margin: 0 !important;
   }
   .no-slot { display: none; }
@@ -915,32 +915,45 @@
   const noSlot = document.getElementById('noSlot');
   let dodgeCount = 0;
 
+  const cardEl = document.querySelector('.card');
+
   function detachNo() {
     if (btnNo.classList.contains('flying')) return;
-    const rect = btnNo.getBoundingClientRect();
+    const btnRect  = btnNo.getBoundingClientRect();
+    const cardRect = cardEl.getBoundingClientRect();
     // Placeholder mantiene el espacio en la fila para que "Sí" no se mueva
-    noSlot.style.width  = rect.width + 'px';
-    noSlot.style.height = rect.height + 'px';
+    noSlot.style.width  = btnRect.width + 'px';
+    noSlot.style.height = btnRect.height + 'px';
     noSlot.classList.add('active');
-    btnNo.style.left = rect.left + 'px';
-    btnNo.style.top  = rect.top + 'px';
+    // Coordenadas relativas a la tarjeta (.card tiene position: relative)
+    btnNo.style.left = (btnRect.left - cardRect.left) + 'px';
+    btnNo.style.top  = (btnRect.top  - cardRect.top)  + 'px';
     btnNo.classList.add('flying');
   }
 
+  let lastDodge = 0;
+  let lastPos = null;
   function dodge() {
+    // Cooldown: no esquivar más de cada 280ms (evita que se mueva como loco)
+    const now = Date.now();
+    if (now - lastDodge < 280) return;
+    lastDodge = now;
+
     detachNo();
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const btnW = btnNo.offsetWidth;
-    const btnH = btnNo.offsetHeight;
-    // Mantiene el botón a >=120px del cursor para evitar atrapes inmediatos
-    const margin = 16;
+    const cardW = cardEl.clientWidth;
+    const cardH = cardEl.clientHeight;
+    const btnW  = btnNo.offsetWidth;
+    const btnH  = btnNo.offsetHeight;
+    const margin = 14;
+
+    // Elige una posición nueva dentro de la tarjeta, lejos de la actual
     let x, y, tries = 0;
     do {
-      x = Math.random() * (w - btnW - margin * 2) + margin;
-      y = Math.random() * (h - btnH - margin * 2) + margin;
+      x = Math.random() * (cardW - btnW - margin * 2) + margin;
+      y = Math.random() * (cardH - btnH - margin * 2) + margin;
       tries++;
-    } while (tries < 6 && lastMouse && Math.hypot(x - lastMouse.x, y - lastMouse.y) < 140);
+    } while (tries < 8 && lastPos && Math.hypot(x - lastPos.x, y - lastPos.y) < Math.min(cardW, cardH) * 0.35);
+    lastPos = { x, y };
     btnNo.style.left = x + 'px';
     btnNo.style.top  = y + 'px';
 
@@ -964,16 +977,6 @@
     if (taunts[dodgeCount]) btnNo.textContent = taunts[dodgeCount];
   }
 
-  let lastMouse = null;
-  window.addEventListener('mousemove', (e) => {
-    lastMouse = { x: e.clientX, y: e.clientY };
-    if (btnNo.classList.contains('flying')) {
-      const rect = btnNo.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      if (Math.hypot(e.clientX - cx, e.clientY - cy) < 80) dodge();
-    }
-  });
   btnNo.addEventListener('mouseenter', dodge);
   btnNo.addEventListener('touchstart', (e) => { e.preventDefault(); dodge(); });
   btnNo.addEventListener('focus', dodge);
