@@ -105,6 +105,55 @@
     100% { background-position: 200% 0%; }
   }
 
+  .card.shaking {
+    animation: tremor 0.22s ease-in-out infinite;
+  }
+  .card.shaking-hard {
+    animation: tremor-hard 0.13s ease-in-out infinite;
+  }
+  @keyframes tremor {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    20%      { transform: translate(-7px, 4px) rotate(-1deg); }
+    40%      { transform: translate(7px, -4px) rotate(1deg); }
+    60%      { transform: translate(-5px, 6px) rotate(-0.8deg); }
+    80%      { transform: translate(5px, -6px) rotate(0.8deg); }
+  }
+  @keyframes tremor-hard {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    20%      { transform: translate(-14px, 8px)  rotate(-1.8deg); }
+    40%      { transform: translate(14px, -8px)  rotate(1.8deg); }
+    60%      { transform: translate(-10px, 12px) rotate(-1.4deg); }
+    80%      { transform: translate(10px, -12px) rotate(1.4deg); }
+  }
+
+  /* ====== La tarjeta se parte en dos ====== */
+  .card-split {
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    left: 50%;
+    width: 0;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #fff0f5 0%, #ffe5ec 50%, #ffd6e0 100%);
+    pointer-events: none;
+    z-index: 4;
+    transition: width 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+    /* Bordes en zigzag tipo papel rasgado */
+    clip-path: polygon(
+      0% 0%, 100% 0%,
+      88% 4%, 100% 8%, 86% 12%, 100% 16%, 90% 20%, 100% 24%, 87% 28%, 100% 32%,
+      89% 36%, 100% 40%, 86% 44%, 100% 48%, 90% 52%, 100% 56%, 87% 60%, 100% 64%,
+      88% 68%, 100% 72%, 86% 76%, 100% 80%, 89% 84%, 100% 88%, 87% 92%, 100% 96%, 90% 100%,
+      0% 100%,
+      10% 96%, 0% 92%, 13% 88%, 0% 84%, 11% 80%, 0% 76%, 14% 72%, 0% 68%,
+      12% 64%, 0% 60%, 13% 56%, 0% 52%, 10% 48%, 0% 44%, 11% 40%, 0% 36%,
+      13% 32%, 0% 28%, 10% 24%, 0% 20%, 14% 16%, 0% 12%, 12% 8%, 0% 4%
+    );
+  }
+  .card.splitting       .card-split { width: 60px; }
+  .card.splitting-hard  .card-split { width: 160px; }
+  .card.splitting-mega  .card-split { width: 280px; }
+
   .progress {
     display: flex;
     justify-content: center;
@@ -179,7 +228,6 @@
     justify-content: center;
     flex-wrap: wrap;
     margin-top: 32px;
-    position: relative;
   }
   .btn {
     font-family: 'Inter', sans-serif;
@@ -196,9 +244,18 @@
     background: linear-gradient(135deg, var(--pink) 0%, var(--pink-deep) 100%);
     color: white;
     box-shadow: 0 10px 30px rgba(255, 107, 157, 0.5);
+    --grow: 1;
+    --shift-x: 0px;
+    --shift-y: 0px;
+    transform: translate(var(--shift-x), var(--shift-y)) scale(var(--grow));
+    transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+                box-shadow 0.3s, background 0.3s;
+    transform-origin: center;
+    position: relative;
+    z-index: 5;
   }
   .btn-yes:hover {
-    transform: translateY(-3px) scale(1.05);
+    transform: translate(var(--shift-x), var(--shift-y)) scale(calc(var(--grow) * 1.05));
     box-shadow: 0 14px 40px rgba(255, 107, 157, 0.65);
   }
   .btn-yes:disabled {
@@ -641,6 +698,7 @@
 <div class="hearts" id="hearts"></div>
 
 <div class="card">
+  <div class="card-split" aria-hidden="true"></div>
   <div class="progress" id="progress">
     <div class="dot active"></div>
     <div class="dot"></div>
@@ -653,7 +711,7 @@
   <div class="step active" data-step="1">
     <div class="eyebrow">Una pequeña pregunta</div>
     <h1>¿Quieres salir <br/>conmigo? <span class="sparkle">💕</span></h1>
-    <p class="subtitle">He estado pensando en ti, y me encantaría invitarte. <br/>¿Aceptas? 🌸</p>
+    <p class="subtitle" id="step1Subtitle">He estado pensando en ti, y me encantaría invitarte. <br/>¿Aceptas? 🌸</p>
     <div class="btn-row">
       <button class="btn btn-yes" onclick="next()">Sí, salgamos</button>
       <span id="noSlot" class="no-slot"></span>
@@ -904,6 +962,11 @@
       if (i + 1 < n && i < 5) d.classList.add('done');
       if (i + 1 === n && i < 5) d.classList.add('active');
     });
+    // Cuando se sale del paso 1 (acepta o vuelve), restaurar la tarjeta para
+    // que no quede temblando/partida en los siguientes pasos.
+    if (n !== 1 && typeof resetDodgeState === 'function') {
+      resetDodgeState();
+    }
     state.step = n;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -967,14 +1030,95 @@
       "ya po...",
       "no insistas 😂",
       "sé que quieres 😉",
-      "estoy esperando un 'sí' ✨",
-      "💖",
-      "ok, una más...",
-      "ya, en serio jajaja",
-      "🥺",
-      "👀"
+      "esperando un 'sí' ✨",
+      // turbio mode activado 👇
+      "ya esto duele 💔",
+      "di que sí o me muero 😩",
+      "me estás matando lentamente 💀",
+      "voy a llorar, en serio 😭",
+      "porfa porfa porfa 🥺",
+      "ya no respondo por mis actos 👁️",
+      "vendería un riñón 🫀",
+      "no como hace 3 días 🍞",
+      "mi terapeuta lo va a saber 🛋️",
+      "te escribí un poema 📝",
+      "le puse tu nombre a mi planta 🪴",
+      "esto ya es acoso amoroso 💌",
+      "ya no hay vuelta atrás 🌀",
+      "me rindo... o no 🙃",
+      "✨ acéptame ✨"
     ];
     if (taunts[dodgeCount]) btnNo.textContent = taunts[dodgeCount];
+
+    // Después de 10 esquives, el subtítulo también se pone turbio
+    const subtitle = document.getElementById('step1Subtitle');
+    const subtitles = {
+      10: "ya po, no seas así 🥺",
+      13: "esto se está poniendo intenso 😬",
+      16: "mi salud mental depende de esto 😵‍💫",
+      19: "ya llamé a mi mamá llorando 📞",
+      22: "te juro que es por amor ✨",
+      25: "ya, está bien... no me ames 💔"
+    };
+    if (subtitles[dodgeCount]) {
+      subtitle.innerHTML = subtitles[dodgeCount];
+      subtitle.style.color = 'var(--pink-deep)';
+      subtitle.style.fontStyle = 'italic';
+    }
+
+    // A partir de 10 esquives, modo turbio: tarjeta se parte + botón "Sí" crece
+    if (dodgeCount >= 10) {
+      cardEl.classList.add('shaking', 'splitting');
+      const btnYes = document.querySelector('.step[data-step="1"] .btn-yes');
+      if (btnYes) {
+        // Primera vez: medir cuánto hay que moverlo para que su centro
+        // coincida con el centro exacto de la tarjeta (así crece sin desbordar
+        // hacia la derecha ni hacia abajo).
+        if (!btnYes.dataset.centered) {
+          const btnRect  = btnYes.getBoundingClientRect();
+          const cRect    = cardEl.getBoundingClientRect();
+          const offsetX  = (cRect.left + cRect.width  / 2) - (btnRect.left + btnRect.width  / 2);
+          const offsetY  = (cRect.top  + cRect.height / 2) - (btnRect.top  + btnRect.height / 2);
+          btnYes.style.setProperty('--shift-x', offsetX + 'px');
+          btnYes.style.setProperty('--shift-y', offsetY + 'px');
+          btnYes.dataset.centered = '1';
+        }
+        // Crece progresivamente, máximo 7x (llena la tarjeta)
+        const grow = Math.min(1.3 + (dodgeCount - 10) * 0.5, 7);
+        btnYes.style.setProperty('--grow', grow);
+      }
+    }
+    if (dodgeCount >= 15) cardEl.classList.add('splitting-hard');
+    if (dodgeCount >= 18) cardEl.classList.add('shaking-hard');
+    if (dodgeCount >= 20) cardEl.classList.add('splitting-mega');
+  }
+
+  // Restaurar todo si vuelve al paso 1 desde otro paso
+  function resetDodgeState() {
+    dodgeCount = 0;
+    lastPos = null;
+    lastDodge = 0;
+    btnNo.classList.remove('flying');
+    btnNo.style.left = '';
+    btnNo.style.top  = '';
+    btnNo.textContent = 'No';
+    noSlot.classList.remove('active');
+    noSlot.style.width = '';
+    noSlot.style.height = '';
+    cardEl.classList.remove('shaking', 'shaking-hard', 'splitting', 'splitting-hard', 'splitting-mega');
+    const btnYes = document.querySelector('.step[data-step="1"] .btn-yes');
+    if (btnYes) {
+      btnYes.style.removeProperty('--grow');
+      btnYes.style.removeProperty('--shift-x');
+      btnYes.style.removeProperty('--shift-y');
+      delete btnYes.dataset.centered;
+    }
+    const subtitle = document.getElementById('step1Subtitle');
+    if (subtitle) {
+      subtitle.innerHTML = 'He estado pensando en ti, y me encantaría invitarte. <br>¿Aceptas? 🌸';
+      subtitle.style.color = '';
+      subtitle.style.fontStyle = '';
+    }
   }
 
   btnNo.addEventListener('mouseenter', dodge);
